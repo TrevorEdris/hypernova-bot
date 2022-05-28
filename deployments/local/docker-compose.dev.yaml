@@ -1,0 +1,80 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: ${PWD}
+      dockerfile: ./deployments/container/dev.Dockerfile
+    container_name: app
+    environment:
+      - SSH_AUTH_SOCK=/run/host-services/ssh-auth.sock
+    volumes:
+      - ${PWD}/:/app
+      - type: bind
+        source: /run/host-services/ssh-auth.sock
+        target: /run/host-services/ssh-auth.sock
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    networks:
+      local-network:
+        ipv4_address: 172.10.0.2
+
+  localstack:
+    container_name: localstack
+    image: localstack/localstack
+    ports:
+      - "4566:4566"
+    environment:
+      SERVICES: dynamodb
+      DEBUG: ${DEBUG- }
+      DATA_DIR: ${DATA_DIR- }
+      PORT_WEB_UI: ${PORT_WEB_UI- }
+      LOCALSTACK_API_KEY: ${LOCALSTACK_API_KEY- }
+      DOCKER_HOST: unix:///var/run/docker.sock
+      HOST_TMP_FOLDER: ${TMPDIR}
+    volumes:
+      - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    networks:
+      local-network:
+        ipv4_address: 172.10.0.3
+
+  dynamodb-admin:
+    image: aaronshaf/dynamodb-admin
+    container_name: dynamodb-admin
+    ports:
+      - "8001:8001"
+    environment:
+      DYNAMO_ENDPOINT: http://localstack:4566
+      AWS_ACCESS_KEY_ID: local
+      AWS_SECRET_ACCESS_KEY: local
+      AWS_REGION: us-east-1
+    networks:
+      local-network:
+        ipv4_address: 172.10.0.4
+
+  populate:
+    image: ${IMAGEORG}/${IMAGE}-populate:latest
+    container_name: populate
+    user: root
+    environment:
+      DYNAMODB_ENDPOINT: http://localstack:4566
+      AWS_ACCESS_KEY_ID: local
+      AWS_SECRET_ACCESS_KEY: local
+      AWS_REGION: us-east-1
+      ITEM_TABLE: items
+      RECORD_COUNT: 175
+    depends_on:
+      - localstack
+    networks:
+      local-network:
+        ipv4_address: 172.10.0.5
+
+networks:
+  local-network:
+    name: "local-network"
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.10.0.0/16

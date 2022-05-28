@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REGION=${REGION:-dev}
+version=${VERSION?Must be set}
+
+# Get the namespace and ensure it's lowercase
+NAMESPACE=${NAMESPACE:-default}
+namespace="$(echo "$NAMESPACE" | tr '[:upper:]' '[:lower:]')"
+
+log_level=${LOG_LEVEL:-info}
+min_replicas=${MIN_REPLICAS:-1}
+max_replicas=${MAX_REPLICAS:-3}
+
+echo "Filling out .tmpl files"
+source secrets/${REGION}/deployment_config.env
+for t in $(find ./kube -name '*.tmpl'); do
+    sed -e "s/VERSION_VALUE/$version/g" \
+    -e "s/LOG_LEVEL_VALUE/$log_level/g" \
+    -e "s/MIN_REPLICAS_VALUE/$min_replicas/g" \
+    -e "s/MAX_REPLICAS_VALUE/$max_replicas/g" \
+    $t > ${t%.tmpl}
+done
+
+echo "Creating namespace $namespace"
+kubectl create namespace "$namespace" || true
+
+echo "Creating secrets"
+source secrets/$REGION/some-secret-file
+kubectl --namespace="$namespace" create secret generic some-secret-file \
+    --from-literal="some_variable=${some_variable}" \
+    --dry-run -o yaml \
+    | kubectl --namespace="$namespace" apply -f -
+
+echo "Applying yaml files"
+kubectl --namespace="$namespace" apply -f kube/hpa.yaml
+kubectl --namespace="$namespace" apply -f kube/deployment.yaml

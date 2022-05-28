@@ -1,0 +1,2 @@
+secrets/dev/some-secret-file
+secrets/staging/some-secret-file
