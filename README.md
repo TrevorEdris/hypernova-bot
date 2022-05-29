@@ -67,7 +67,7 @@ be able to decrypt those files.
 
 ### Local
 
-Local storage consists of a `sync.Map`, where the key is a string and the value is an `item.Model`, defined in `./app/model/item/model.go`.
+Local storage consists of a `sync.Map`, where the key is a string and the value is an `domain.Item`, defined in `./app/domain/model.go`.
 
 ### DynamoDB
 
