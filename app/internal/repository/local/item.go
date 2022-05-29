@@ -4,7 +4,7 @@ import (
 	"context"
 	"sync"
 
-	"github.com/TrevorEdris/api-template/app/model/item"
+	"github.com/TrevorEdris/hypernova-bot/app/model/item"
 )
 
 type (

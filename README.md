@@ -1,5 +1,5 @@
-[![Go Report Card](https://goreportcard.com/badge/github.com/TrevorEdris/api-template)](https://goreportcard.com/report/github.com/TrevorEdris/api-template)
-![CodeQL](https://github.com/TrevorEdris/api-template/workflows/CodeQL/badge.svg)
+[![Go Report Card](https://goreportcard.com/badge/github.com/TrevorEdris/hypernova-bot)](https://goreportcard.com/report/github.com/TrevorEdris/hypernova-bot)
+![CodeQL](https://github.com/TrevorEdris/hypernova-bot/workflows/CodeQL/badge.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![GoT](https://img.shields.io/badge/Made%20with-Go-1f425f.svg)](https://go.dev)
 

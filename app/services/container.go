@@ -9,8 +9,8 @@ import (
 	"github.com/labstack/gommon/log"
 	"go.uber.org/zap"
 
-	"github.com/TrevorEdris/api-template/app/config"
-	"github.com/TrevorEdris/api-template/app/internal/repository"
+	"github.com/TrevorEdris/hypernova-bot/app/config"
+	"github.com/TrevorEdris/hypernova-bot/app/internal/repository"
 )
 
 type (

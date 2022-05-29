@@ -1,4 +1,4 @@
-module github.com/TrevorEdris/api-template
+module github.com/TrevorEdris/hypernova-bot
 
 go 1.17
 

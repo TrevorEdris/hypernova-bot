@@ -5,8 +5,8 @@ import (
 
 	"github.com/labstack/echo/v4"
 
-	"github.com/TrevorEdris/api-template/app/controller"
-	"github.com/TrevorEdris/api-template/app/model/item"
+	"github.com/TrevorEdris/hypernova-bot/app/controller"
+	"github.com/TrevorEdris/hypernova-bot/app/model/item"
 )
 
 type (
