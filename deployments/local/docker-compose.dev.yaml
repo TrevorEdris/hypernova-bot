@@ -1,11 +1,11 @@
 version: "3.8"
 
 services:
-  app:
+  api:
     build:
       context: ${PWD}
-      dockerfile: ./deployments/container/dev.Dockerfile
-    container_name: app
+      dockerfile: ./deployments/container/dev.api.Dockerfile
+    container_name: api
     environment:
       - SSH_AUTH_SOCK=/run/host-services/ssh-auth.sock
     volumes:
@@ -19,6 +19,25 @@ services:
     networks:
       local-network:
         ipv4_address: 172.10.0.2
+
+  bot:
+    build:
+      context: ${PWD}
+      dockerfile: ./deployments/container/dev.bot.Dockerfile
+    container_name: bot
+    environment:
+      - SSH_AUTH_SOCK=/run/host-services/ssh-auth.sock
+    volumes:
+      - ${PWD}/:/app
+      - type: bind
+        source: /run/host-services/ssh-auth.sock
+        target: /run/host-services/ssh-auth.sock
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+    networks:
+      local-network:
+        ipv4_address: 172.10.0.3
 
   localstack:
     container_name: localstack
@@ -38,7 +57,7 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock"
     networks:
       local-network:
-        ipv4_address: 172.10.0.3
+        ipv4_address: 172.10.0.4
 
   dynamodb-admin:
     image: aaronshaf/dynamodb-admin
@@ -52,10 +71,10 @@ services:
       AWS_REGION: us-east-1
     networks:
       local-network:
-        ipv4_address: 172.10.0.4
+        ipv4_address: 172.10.0.5
 
   populate:
-    image: ${IMAGEORG}/${IMAGE}-populate:latest
+    image: ${IMAGEORG}/${IMAGEBASE}-populate:latest
     container_name: populate
     user: root
     environment:
@@ -64,12 +83,12 @@ services:
       AWS_SECRET_ACCESS_KEY: local
       AWS_REGION: us-east-1
       ITEM_TABLE: items
-      RECORD_COUNT: 175
+      RECORD_COUNT: 5
     depends_on:
       - localstack
     networks:
       local-network:
-        ipv4_address: 172.10.0.5
+        ipv4_address: 172.10.0.6
 
 networks:
   local-network:

@@ -1,13 +1,25 @@
 version: '3'
 services:
-    test:
-        image: ${IMAGEORG}/${IMAGE}-build:latest
-        container_name: unit_tests
+    test-api:
+        image: ${IMAGEORG}/${IMAGEBASE}-api-build:latest
+        container_name: unit_tests_api
         environment:
             - LOG_LEVEL=debug
         entrypoint:
             - go
             - test
             - -v
-            - -tags=unit
+            - -tags=api
+            - ./...
+
+    test-bot:
+        image: ${IMAGEORG}/${IMAGEBASE}-bot-build:latest
+        container_name: unit_tests_bot
+        environment:
+            - LOG_LEVEL=debug
+        entrypoint:
+            - go
+            - test
+            - -v
+            - -tags=bot
             - ./...

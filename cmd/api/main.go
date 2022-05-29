@@ -8,8 +8,8 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/TrevorEdris/hypernova-bot/app/routes"
-	"github.com/TrevorEdris/hypernova-bot/app/services"
+	"github.com/TrevorEdris/hypernova-bot/api/routes"
+	"github.com/TrevorEdris/hypernova-bot/api/services"
 )
 
 func main() {

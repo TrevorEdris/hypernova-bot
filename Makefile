@@ -1,7 +1,7 @@
 SHELL ?= /bin/bash
 export REGISTRY ?= ${DOCKER_REGISTRY}
 export IMAGEORG ?= tedris
-export IMAGE ?= hypernova-bot
+export IMAGEBASE ?= hypernova
 export VERSION ?= $(shell printf "`./tools/version`${VERSION_SUFFIX}")
 export GIT_HASH =$(shell git rev-parse --short HEAD)
 export DEV_DOCKER_COMPOSE ?= deployments/local/docker-compose.dev.yaml
@@ -53,7 +53,7 @@ version: submodules tools/version ## Automatically calculate the version
 # ---------------------------[ Local App ]---------------------------
 .PHONY: dev
 dev: build-populate ## Run the API locally and print logs to stdout
-	docker-compose -f ${DEV_DOCKER_COMPOSE} up -d
+	docker-compose -f ${DEV_DOCKER_COMPOSE} up --build -d
 	make -s dev-logs
 
 .PHONY: dev-down
@@ -66,19 +66,28 @@ dev-restart: ## Restart all containers
 
 .PHONY: dev-logs
 dev-logs: ## Print logs in stdout
-	docker-compose -f ${DEV_DOCKER_COMPOSE} logs -f app populate
+	docker-compose -f ${DEV_DOCKER_COMPOSE} logs -f api bot populate
 
 # -----------------------------[ Build ]-----------------------------
 
 .PHONY: build
-build: submodules version ## Build and tag the docker container for the API
-	@docker build -f deployments/container/Dockerfile -t ${IMAGEORG}/${IMAGE}:${VERSION} --target builder .
-	@docker tag ${IMAGEORG}/${IMAGE}:${VERSION} ${IMAGEORG}/${IMAGE}:latest
-	@docker tag ${IMAGEORG}/${IMAGE}:${VERSION} ${IMAGEORG}/${IMAGE}-build:latest
+build: submodules version build-api build-bot ## Build and tag the docker container for the API and Bot
+
+.PHONY: build-api
+build-api:
+	@docker build -f deployments/container/api.Dockerfile -t ${IMAGEORG}/${IMAGEBASE}-api:${VERSION} --target builder .
+	@docker tag ${IMAGEORG}/${IMAGEBASE}-api:${VERSION} ${IMAGEORG}/${IMAGEBASE}-api:latest
+	@docker tag ${IMAGEORG}/${IMAGEBASE}-api:${VERSION} ${IMAGEORG}/${IMAGEBASE}-api-build:latest
+
+.PHONY: build-bot
+build-bot:
+	@docker build -f deployments/container/bot.Dockerfile -t ${IMAGEORG}/${IMAGEBASE}-bot:${VERSION} --target builder .
+	@docker tag ${IMAGEORG}/${IMAGEBASE}-bot:${VERSION} ${IMAGEORG}/${IMAGEBASE}-bot:latest
+	@docker tag ${IMAGEORG}/${IMAGEBASE}-bot:${VERSION} ${IMAGEORG}/${IMAGEBASE}-bot-build:latest
 
 .PHONY: build-populate
 build-populate: ## Build and tag the container that populates data for the local dev environment
-	@docker build -f deployments/container/populate.Dockerfile -t ${IMAGEORG}/${IMAGE}-populate:latest .
+	@docker build -f deployments/container/populate.Dockerfile -t ${IMAGEORG}/${IMAGEBASE}-populate:latest .
 
 # -----------------------------[ Test ]------------------------------
 
@@ -92,14 +101,30 @@ test-unit: ## Run unit tests
 # -----------------------------[ Publish ]---------------------------
 
 .PHONY: finalize
-finalize: test ## Build, test, and tag the docker container with the finalized tag (typically, the full docker registery will be tagged here)
-	@docker build -f container/Dockerfile -t ${IMAGEORG}/${IMAGE}:${VERSION} .
-	@docker tag ${IMAGEORG}/${IMAGE}:${VERSION} ${IMAGEORG}/${IMAGE}:latest
+finalize: test finalize-api finalize-bot ## Build, test, and tag the docker container with the finalized tag (typically, the full docker registery will be tagged here)
+
+.PHONY: finalize-api
+finalize-api:
+	@docker build -f container/Dockerfile -t ${IMAGEORG}/${IMAGEBASE}-api:${VERSION} .
+	@docker tag ${IMAGEORG}/${IMAGEBASE}-api:${VERSION} ${IMAGEORG}/${IMAGEBASE}-api:latest
+
+.PHONY: finalize-bot
+finalize-bot:
+	@docker build -f container/Dockerfile -t ${IMAGEORG}/${IMAGEBASE}-bot:${VERSION} .
+	@docker tag ${IMAGEORG}/${IMAGEBASE}-bot:${VERSION} ${IMAGEORG}/${IMAGEBASE}-bot:latest
 
 .PHONY: publish-only
-publish-only: ## Push the tagged docker image to the docker registry
-	@docker tag ${IMAGEORG}/${IMAGE}:${VERSION} ${REGISTRY}${IMAGEORG}/${IMAGE}:${VERSION}
-	@docker push ${REGISTRY}${IMAGEORG}/${IMAGE}:${VERSION}
+publish-only: publish-only-api publish-only-bot ## Push the tagged docker image to the docker registry
+
+.PHONY: publish-only-api
+publish-only-api: ## Push the tagged docker image to the docker registry
+	@docker tag ${IMAGEORG}/${IMAGEBASE}-api:${VERSION} ${REGISTRY}${IMAGEORG}/${IMAGEBASE}-api:${VERSION}
+	@docker push ${REGISTRY}${IMAGEORG}/${IMAGEBASE}-api:${VERSION}
+
+.PHONY: publish-only-bot
+publish-only-bot: ## Push the tagged docker image to the docker registry
+	@docker tag ${IMAGEORG}/${IMAGEBASE}-bot:${VERSION} ${REGISTRY}${IMAGEORG}/${IMAGEBASE}-bot:${VERSION}
+	@docker push ${REGISTRY}${IMAGEORG}/${IMAGEBASE}-bot:${VERSION}
 
 .PHONY: publish
 publish: finalize publish-only ## Finalize and publish the docker container
@@ -119,7 +144,16 @@ kube-deploy: publish kube-deploy-only ## Build, test, finalize, publish, and the
 # -----------------------------[ Other ] ----------------------------
 
 .PHONY: copy-binary
-copy-binary: build ## Create a temporary container based on the "-build" image and copy the binary out of the container
-	@docker create --name ${IMAGE}-${GIT_HASH} ${IMAGEORG}/${IMAGE}-build:${VERSION}
-	@docker cp ${IMAGE}-${GIT_HASH}:/src/the-binary ./the-binary
-	@docker rm ${IMAGE}-${GIT_HASH}
+copy-binary: build copy-binary-api copy-binary-bot ## Create a temporary container based on the "-build" image and copy the binary out of the container
+
+.PHONY: copy-binary-api
+copy-binary-api: ## Create a temporary container based on the "-build" image and copy the binary out of the container
+	@docker create --name ${IMAGEBASE}-api-${GIT_HASH} ${IMAGEORG}/${IMAGEBASE}-api-build:${VERSION}
+	@docker cp ${IMAGEBASE}-api-${GIT_HASH}:/src/the-binary ./the-binary
+	@docker rm ${IMAGEBASE}-api-${GIT_HASH}
+
+.PHONY: copy-binary-bot
+copy-binary-bot: ## Create a temporary container based on the "-build" image and copy the binary out of the container
+	@docker create --name ${IMAGEBASE}-bot-${GIT_HASH} ${IMAGEORG}/${IMAGEBASE}-bot-build:${VERSION}
+	@docker cp ${IMAGEBASE}-bot-${GIT_HASH}:/src/the-binary ./the-binary
+	@docker rm ${IMAGEBASE}-bot-${GIT_HASH}
