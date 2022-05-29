@@ -11,6 +11,13 @@ as well as the Minecraft server.
 
 ## Local Development
 
+**Requirements**
+
+* `bash` >= `5.0.x`
+* `make`
+* `docker`
+* `docker-compose`
+
 For local development, use the `make (dev-up|dev-restart|dev-down|dev-logs)` commands provided by the Makefile.
 
 ```md
