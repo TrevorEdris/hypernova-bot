@@ -4,4 +4,5 @@ cleanup () {
 }
 trap cleanup EXIT
 
-docker-compose -f test/docker-compose.test.yaml run --rm --name=${IMAGE}-${GIT_HASH} test
+docker-compose -f test/docker-compose.test.yaml run --rm --name=${IMAGEBASE}-api-${GIT_HASH} test-api
+docker-compose -f test/docker-compose.test.yaml run --rm --name=${IMAGEBASE}-bot-${GIT_HASH} test-bot
