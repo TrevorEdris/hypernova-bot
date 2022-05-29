@@ -3,7 +3,7 @@ package routes
 import (
 	"net/http"
 
-	"github.com/TrevorEdris/api-template/app/controller"
+	"github.com/TrevorEdris/hypernova-bot/app/controller"
 	"github.com/labstack/echo/v4"
 )
 

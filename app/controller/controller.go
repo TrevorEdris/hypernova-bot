@@ -3,8 +3,8 @@ package controller
 import (
 	"net/http"
 
-	"github.com/TrevorEdris/api-template/app/context"
-	"github.com/TrevorEdris/api-template/app/services"
+	"github.com/TrevorEdris/hypernova-bot/app/context"
+	"github.com/TrevorEdris/hypernova-bot/app/services"
 	"github.com/labstack/echo/v4"
 )
 

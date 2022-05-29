@@ -3,10 +3,10 @@ package repository
 import (
 	"context"
 
-	"github.com/TrevorEdris/api-template/app/config"
-	"github.com/TrevorEdris/api-template/app/internal/repository/dynamodb"
-	"github.com/TrevorEdris/api-template/app/internal/repository/local"
-	"github.com/TrevorEdris/api-template/app/model/item"
+	"github.com/TrevorEdris/hypernova-bot/app/config"
+	"github.com/TrevorEdris/hypernova-bot/app/internal/repository/dynamodb"
+	"github.com/TrevorEdris/hypernova-bot/app/internal/repository/local"
+	"github.com/TrevorEdris/hypernova-bot/app/model/item"
 )
 
 type (

@@ -18,8 +18,8 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/TrevorEdris/api-template/app/config"
-	"github.com/TrevorEdris/api-template/app/model/item"
+	"github.com/TrevorEdris/hypernova-bot/app/config"
+	"github.com/TrevorEdris/hypernova-bot/app/model/item"
 )
 
 type itemSuite struct {

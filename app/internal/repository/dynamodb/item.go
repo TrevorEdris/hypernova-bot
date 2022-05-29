@@ -9,8 +9,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 
-	"github.com/TrevorEdris/api-template/app/config"
-	"github.com/TrevorEdris/api-template/app/model/item"
+	"github.com/TrevorEdris/hypernova-bot/app/config"
+	"github.com/TrevorEdris/hypernova-bot/app/model/item"
 )
 
 type (

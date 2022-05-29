@@ -7,7 +7,7 @@ WORKDIR /src
 # Naively copy everything. The final binary will be copied into a scratch container.
 COPY . .
 
-RUN go build -ldflags "-linkmode external -extldflags \"-static\" -s -w $LDFLAGS" -o the-binary cmd/api-template/main.go
+RUN go build -ldflags "-linkmode external -extldflags \"-static\" -s -w $LDFLAGS" -o the-binary cmd/api/main.go
 
 # Copy the binary from the "builder" docker target into a scratch container
 # to vastly reduce the overall size of the image

@@ -6,9 +6,9 @@ import (
 	"github.com/labstack/echo/v4"
 	echomw "github.com/labstack/echo/v4/middleware"
 
-	"github.com/TrevorEdris/api-template/app/controller"
-	"github.com/TrevorEdris/api-template/app/middleware"
-	"github.com/TrevorEdris/api-template/app/services"
+	"github.com/TrevorEdris/hypernova-bot/app/controller"
+	"github.com/TrevorEdris/hypernova-bot/app/middleware"
+	"github.com/TrevorEdris/hypernova-bot/app/services"
 )
 
 // BuildRouter builds the HTTP router for all endpoint handlers.

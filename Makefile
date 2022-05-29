@@ -1,7 +1,7 @@
 SHELL ?= /bin/bash
 export REGISTRY ?= ${DOCKER_REGISTRY}
 export IMAGEORG ?= tedris
-export IMAGE ?= api-template
+export IMAGE ?= hypernova-bot
 export VERSION ?= $(shell printf "`./tools/version`${VERSION_SUFFIX}")
 export GIT_HASH =$(shell git rev-parse --short HEAD)
 export DEV_DOCKER_COMPOSE ?= deployments/local/docker-compose.dev.yaml
