@@ -3,41 +3,45 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![GoT](https://img.shields.io/badge/Made%20with-Go-1f425f.svg)](https://go.dev)
 
-# API Template
+# HypernovaBot
 
-This project provides an easy to modify template for an API using the labstack/echo framework.
-The Repository code pattern is used for data access, making the API highly flexible for whatever
-storage solution is necessary.
-
-**Note:** A significant portion of the code has been slightly modified based on [mikestefanello/pagoda](https://github.com/mikestefanello/pagoda). 
+This project is a Discord bot, enabling Discord+Minecraft server owners to provide their members
+with a consistent economy system, rewarding them for being active in both the Discord server
+as well as the Minecraft server.
 
 ## Local Development
 
-For local development, use the `make (up|restart|down|logs)` commands provided by the Makefile.
+For local development, use the `make (dev-up|dev-restart|dev-down|dev-logs)` commands provided by the Makefile.
 
 ```md
 ❯ make help
 . . .
-up            Run the API locally and print logs to stdout
-down          Stop all containers
-restart       Restart all containers
-logs          Print logs in stdout
+dev-up            Run the API locally and print logs to stdout
+dev-down          Stop all containers
+dev-restart       Restart all containers
+dev-logs          Print logs in stdout
 . . .
 ```
 
-The above commands use `deployments/local/docker-compose.dev.yaml` to run the API. The binary for the API will be rebuilt automatically
-when a change to one of the source `.go` files is detected (configurable in `.air.toml`).
+The above commands use `deployments/local/docker-compose.dev.yaml` to run the API and Bot. The binaries for each will be rebuilt automatically
+when a change to one of the source `.go` files is detected (configurable in `.air.(api|bot).toml`).
 
 ```bash
-app               |    ____    __
-app               |   / __/___/ /  ___
-app               |  / _// __/ _ \/ _ \
-app               | /___/\__/_//_/\___/ v4.6.3
-app               | High performance, minimalist Go web framework
-app               | https://echo.labstack.com
-app               | ____________________________________O/_______
-app               |                                     O\
-app               | ⇨ http server started on [::]:8000
+bot               | {"level":"info","ts":1653848623.2347543,"caller":"controller/controller.go:46","msg":"Successfully opened discord session","session_id":"39d4923af2295bedc044979df6815077","bot_username":"pingpong-bot#1315"}
+api               | running...
+api               | {"time":"2022-05-29T18:23:43.6939776Z","level":"INFO","prefix":"echo","file":"container.go","line":"88","message":"Configured for local storage"}
+api               | {"time":"2022-05-29T18:23:43.6945775Z","level":"INFO","prefix":"echo","file":"main.go","line":"48","message":"Starting HTTP server"}
+api               |
+api               |    ____    __
+api               |   / __/___/ /  ___
+api               |  / _// __/ _ \/ _ \
+api               | /___/\__/_//_/\___/ v4.6.3
+api               | High performance, minimalist Go web framework
+api               | https://echo.labstack.com
+api               | ____________________________________O/_______
+api               |                                     O\
+api               | ⇨ http server started on [::]:8000
+bot               | {"level":"info","ts":1653848675.20739,"caller":"controller/controller.go:74","msg":"Handling new message event","author":"MuchUsername#5604"}
 ```
 
 See [https://github.com/cosmtrek/air](https://github.com/cosmtrek/air) for more details.
@@ -101,39 +105,7 @@ TODO: Create auto-generated OpenAPI definition
 
 ## Deployment Procedure
 
-Deployment of this API to kubernetes is made simpler with the following Makefile targets.
-
-```md
-❯ make help
-. . .
-build         Build and tag the docker container for the API
-test          Run unit tests
-finalize      Build, test, and tag the docker container with the finalized tag (typically, the full docker registery will be tagged here)
-publish_only  Push the tagged docker image to the docker registry
-publish       Finalize and publish the docker container
-deploy_only   Fill out the .yaml.tmpl files and apply them to the specified namespace
-deploy        Build, test, finalize, publish, and then deploy the docker container to kube
-```
-
-**Notes:**
-
-* The default namespace is `tedris`.
-* The default region is `dev`.
-
-### Deploying to dev
-
-1. `git checkout vX.Y.Z`
-2. `make deploy NAMESPACE=<some_namespace_here>`
-
-### Deploying to a non-dev environment
-
-1. `git checkout vX.Y.Z`
-2. `make deploy REGION=<some_non-dev_region>`
-
-### Deploying _without_ running any tests
-
-1. `git checkout vX.Y.Z`
-2. `make deploy_only REGION=<some_region> NAMESPACE=<some_namespace>`
+TODO: Describe deployments
 
 ## Common Maintenance
 
